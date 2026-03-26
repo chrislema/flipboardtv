@@ -92,41 +92,68 @@
             }
         }
 
-        /* ── Word wrap + center ── */
-        function layoutMessage(text) {
-            text = text.toUpperCase();
-            const words = text.split(/\s+/);
-            const lines = [];
-            let line = '';
-
-            for (const word of words) {
-                if (word.length > COLS) {
-                    if (line) lines.push(line);
-                    lines.push(word.slice(0, COLS));
-                    line = '';
-                    continue;
-                }
-                if (line.length + word.length + (line ? 1 : 0) > COLS) {
-                    lines.push(line);
-                    line = word;
+        /* ── Tokenize: merge standalone dashes/colons with previous word ── */
+        function tokenize(text) {
+            const raw = text.toUpperCase().trim().split(/\s+/);
+            const tokens = [];
+            for (const w of raw) {
+                if ((w === '-' || w === '--' || w === ':') && tokens.length > 0) {
+                    tokens[tokens.length - 1] += ' ' + w;
                 } else {
-                    line += (line ? ' ' : '') + word;
+                    tokens.push(w);
                 }
             }
-            if (line) lines.push(line);
+            return tokens;
+        }
 
-            // Build target grid — centered vertically and horizontally
+        /* ── Minimum-raggedness line breaking (TeX-style) ── */
+        function wrapBalanced(tokens) {
+            const n = tokens.length;
+            if (n === 0) return [];
+
+            const dp = new Array(n + 1).fill(Infinity);
+            const breaks = new Array(n + 1).fill(0);
+            dp[n] = 0;
+
+            for (let i = n - 1; i >= 0; i--) {
+                let len = 0;
+                for (let j = i; j < n; j++) {
+                    len += tokens[j].length + (j > i ? 1 : 0);
+                    if (len > COLS) break;
+                    const slack = COLS - len;
+                    const cost = (j === n - 1) ? 0 : slack * slack;
+                    if (dp[j + 1] + cost < dp[i]) {
+                        dp[i] = dp[j + 1] + cost;
+                        breaks[i] = j + 1;
+                    }
+                }
+            }
+
+            const lines = [];
+            let idx = 0;
+            while (idx < n) {
+                lines.push(tokens.slice(idx, breaks[idx]).join(' '));
+                idx = breaks[idx];
+            }
+            return lines;
+        }
+
+        /* ── Layout message onto the grid ── */
+        function layoutMessage(text) {
+            const tokens = tokenize(text);
+            const lines = wrapBalanced(tokens);
+
             const startRow = Math.max(0, Math.floor((ROWS - lines.length) / 2));
             const grid = [];
 
             for (let r = 0; r < ROWS; r++) {
                 grid[r] = [];
                 const li = r - startRow;
-                const text = (li >= 0 && li < lines.length) ? lines[li] : '';
-                const pad = Math.floor((COLS - text.length) / 2);
+                const lineText = (li >= 0 && li < lines.length) ? lines[li] : '';
+                const pad = Math.floor((COLS - lineText.length) / 2);
                 for (let c = 0; c < COLS; c++) {
                     const ci = c - pad;
-                    grid[r][c] = (ci >= 0 && ci < text.length) ? text[ci] : ' ';
+                    grid[r][c] = (ci >= 0 && ci < lineText.length) ? lineText[ci] : ' ';
                 }
             }
             return grid;
