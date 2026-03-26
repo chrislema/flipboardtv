@@ -11,15 +11,15 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            background: #0a0a0a;
+            background: #2a2a2a;
         }
 
         .board {
             display: grid;
             grid-template-columns: repeat(11, 1fr);
             grid-template-rows: repeat(5, 1fr);
-            gap: 1vh 0.6vw;
-            padding: 3vh 15vw;
+            gap: 4px;
+            padding: 4px;
             width: 100vw;
             height: 100vh;
         }
@@ -29,56 +29,32 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0.3vw;
+            border-radius: 4px;
             overflow: hidden;
             user-select: none;
 
-            aspect-ratio: 1 / 1;
-
-            /* Recessed well — inset from top-left, lit from bottom-right */
-            background: #161616;
+            /* Recessed well — sunk into the board surface */
+            background: #141414;
+            border-top: 2px solid #0a0a0a;
+            border-left: 2px solid #0a0a0a;
+            border-bottom: 2px solid #3a3a3a;
+            border-right: 2px solid #3a3a3a;
             box-shadow:
-                inset 4px 4px 8px rgba(0, 0, 0, 0.9),
-                inset 2px 2px 4px rgba(0, 0, 0, 0.8),
-                inset -2px -2px 4px rgba(255, 255, 255, 0.04),
-                inset 0 0 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .flap {
-            position: absolute;
-            inset: 6%;
-            border-radius: 0.15vw;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            /* The flap surface — slightly raised from the well */
-            background: linear-gradient(
-                180deg,
-                #2a2a2a 0%,
-                #252525 48%,
-                #1e1e1e 52%,
-                #222 100%
-            );
-            box-shadow:
-                0 1px 3px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.07),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+                inset 4px 4px 12px rgba(0, 0, 0, 0.9),
+                inset 2px 2px 6px rgba(0, 0, 0, 0.7),
+                inset -1px -1px 4px rgba(255, 255, 255, 0.03);
         }
 
         /* The split line — where the flap halves meet */
-        .flap::after {
+        .tile::after {
             content: '';
             position: absolute;
-            left: 4%;
-            right: 4%;
+            left: 5%;
+            right: 5%;
             top: 50%;
-            height: 1.5px;
+            height: 1px;
             background: #0a0a0a;
-            box-shadow:
-                0 1px 0 rgba(255, 255, 255, 0.04),
-                0 -1px 0 rgba(0, 0, 0, 0.5);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
             z-index: 2;
         }
 
@@ -86,12 +62,9 @@
             position: relative;
             z-index: 1;
             font-family: 'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
-            font-size: 11vh;
+            font-size: 12vh;
             font-weight: 400;
             color: #ffffff;
-            text-shadow:
-                0 0 8px rgba(255, 255, 255, 0.06),
-                0 1px 0 rgba(0, 0, 0, 0.3);
             line-height: 1;
         }
     </style>
@@ -113,7 +86,7 @@
             for (let c = 0; c < COLS; c++) {
                 const tile = document.createElement('div');
                 tile.className = 'tile';
-                tile.innerHTML = '<div class="flap"><span class="char"> </span></div>';
+                tile.innerHTML = '<span class="char"> </span>';
                 board.appendChild(tile);
                 tiles[r][c] = tile.querySelector('.char');
             }
