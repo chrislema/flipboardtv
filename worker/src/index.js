@@ -29,8 +29,8 @@ export default {
           });
         }
 
-        if (message.length > 40) {
-          return new Response(sendPage('Message cannot exceed 40 characters.'), {
+        if (message.length > 25) {
+          return new Response(sendPage('Message cannot exceed 25 characters.'), {
             headers: { 'Content-Type': 'text/html' },
           });
         }
@@ -148,8 +148,8 @@ function sendPage(error, sent) {
     ${error ? `<p class="error">${error}</p>` : ''}
     ${sent ? `<p class="success">Sent: ${sent}</p>` : ''}
     <form method="POST" action="/send">
-      <input type="text" name="message" maxlength="40" placeholder="Your message..." autofocus>
-      <div class="counter"><span id="count">0</span> / 40</div>
+      <input type="text" name="message" maxlength="25" placeholder="Your message..." autofocus>
+      <div class="counter"><span id="count">0</span> / 25</div>
       <button type="submit">Send</button>
     </form>
   </div>
@@ -159,7 +159,7 @@ function sendPage(error, sent) {
     const counterDiv = document.querySelector('.counter');
     input.addEventListener('input', () => {
       counter.textContent = input.value.length;
-      counterDiv.classList.toggle('over', input.value.length > 40);
+      counterDiv.classList.toggle('over', input.value.length > 25);
     });
   </script>
 </body>
