@@ -168,8 +168,27 @@
             }
         }
 
-        /* ── Kick it off ── */
-        setTimeout(() => setMessage('Welcome to FlipBoard'), 400);
+        /* ── Poll the API for new messages ── */
+        const API_URL = 'https://flipboard.chrislema.workers.dev/message';
+        let currentMessage = '';
+
+        async function pollMessage() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                if (data.message && data.message !== currentMessage) {
+                    currentMessage = data.message;
+                    setMessage(currentMessage);
+                }
+            } catch (e) { /* silent retry next poll */ }
+        }
+
+        // Show welcome, then start polling
+        setMessage('Welcome to FlipBoard');
+        setTimeout(() => {
+            pollMessage();
+            setInterval(pollMessage, 5000);
+        }, 2000);
     </script>
 </body>
 </html>

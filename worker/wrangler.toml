@@ -1,0 +1,7 @@
+name = "flipboard"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "MESSAGES"
+id = "5a7501ed44574d77b2e46f8276bf7a88"
