@@ -29,8 +29,8 @@ export default {
           });
         }
 
-        if (message.length > 25) {
-          return new Response(sendPage('Message cannot exceed 25 characters.'), {
+        if (message.length > 50) {
+          return new Response(sendPage('Message cannot exceed 50 characters.'), {
             headers: { 'Content-Type': 'text/html' },
           });
         }
@@ -148,8 +148,8 @@ function sendPage(error, sent) {
     ${error ? `<p class="error">${error}</p>` : ''}
     ${sent ? `<p class="success">Sent: ${sent}</p>` : ''}
     <form method="POST" action="/send">
-      <input type="text" name="message" maxlength="25" placeholder="Your message..." autofocus>
-      <div class="counter"><span id="count">0</span> / 25</div>
+      <input type="text" name="message" maxlength="50" placeholder="Your message..." autofocus>
+      <div class="counter"><span id="count">0</span> / 50</div>
       <button type="submit">Send</button>
     </form>
   </div>
